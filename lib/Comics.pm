@@ -29,7 +29,7 @@ sub startup {
     $$args .= "\n" if scalar $self->req->headers->header('User-Agent') =~ /^curl|^Mojolicious/;
   });
 
-  $self->plugin(config => {default=>{comicsdir => join '/', $self->app->home, 'public'}});
+  $self->plugin(config => {default=>{}});
 
   # Router
   my $r = $self->routes;

@@ -7,7 +7,7 @@ has usage => sub { shift->extract_usage };
 sub run {
   my ($self, $date) = @_;
 
-  $self->app->comics->pull($date);
+  $self->app->comics->date($date)->pull;
 }
 
 1;

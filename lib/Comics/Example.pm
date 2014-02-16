@@ -11,9 +11,8 @@ sub welcome {
 
 sub list {
   my $self = shift;
-  $self->app->comics->date($self->param('date'));
 #  qx{$webroot/comics.sh $download} if $self->param('get');
-  $self->stash(comics => $self->app->comics);
+  $self->stash(comics => $self->app->comics->date($self->param('date'));
 }
 
 1;
