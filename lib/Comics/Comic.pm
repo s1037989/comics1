@@ -1,7 +1,7 @@
 package Comics::Comic;
 use Mojo::Base -base;
 use Mojo::Util 'decamelize';
-use overload '""' => sub { shift->name };
+use overload '""' => sub { shift->name }, fallback=>1;
 
 has name => 'Unnamed';
 has link => '';

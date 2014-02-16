@@ -1,6 +1,6 @@
 package Comics::Core;
 use Mojo::Base -base;
-use overload '""' => sub { shift->to_string };
+use overload '""' => sub { shift->to_string }, fallback=>1;
 
 use Mojo::Loader;
 use Mojo::Home;
@@ -14,12 +14,11 @@ use Date::Range;
 has config => sub { shift->{config} || {} };
 has agent => "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Ubuntu Chromium/31.0.1650.63 Chrome/31.0.1650.63 Safari/537.36";
 has _first => '20030720';
-#has _date => '';
 has __date => '';
 has _ordered => sub { [] };
 has all => sub { Mojo::Collection->new(@{shift->_ordered}) };
 
-sub date { my ($self, $date) = @_; $self->__date($date || $self->_date ? Date::Simple::D8->new($date || $self->_date) : Date::Simple->new); $self; };
+sub date { my ($self, $date) = @_; $self->__date($date ? Date::Simple::D8->new($date) : Date::Simple::D8->new); $self; };
 sub first { my $self = shift; $self->__date(Date::Simple::D8->new($self->_first)); $self; }
 sub today { my $self = shift; $self->__date(Date::Simple::D8->new); $self; }
 sub next { my $self = shift; $self->__date($self->__date+1); $self; }
@@ -30,10 +29,8 @@ sub random { my $self = shift; $self->__date(Mojo::Collection->new(Date::Range->
 sub to_string { shift->__date }
 
 sub new {
-  my $self = shift;
-  my $date = shift;
-  $self = $self->SUPER::new(@_);
-  $self->date($date) if $date;
+  my $self = shift->SUPER::new(@_);
+  $self->date;
   my $l = Mojo::Loader->new;
   for my $module ( (map { "Comics::Comic::".camelize($_) } @{$self->config->{order}}), @{$l->search('Comics::Comic')} ) {
     my $M = (((split '::', $module))[-1]);
