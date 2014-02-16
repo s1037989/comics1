@@ -1,0 +1,53 @@
+% my $comicsdir = $comics->config->{comicsdir};
+% my $today = $comics->today;
+% my $date = $comics->date;
+% my $next = $comics->next;
+% my $prev = $comics->prev;
+% my $first = $comics->first;
+% my $random = $comics->random;
+% my $datefull = $comics->datefull;
+% my $menu = [
+%   ["First Day" => $first],
+%   ["Random Day" => $random],
+%   ["Previous Day" => $prev],
+%   ["Next Day" => $next],
+%   ["Today" => $today],
+% ];
+
+% my $stat = scalar localtime((stat("$comicsdir/$date"))[9]);
+% my $r = 0;
+% my $t = scalar @{$comics->list};
+
+% my @comics;
+% foreach my $comic ( map { $comics->$_ } @{$comics->list} ) {
+  % $r++ if $comic->img;
+  <%= $comic->img %><br>
+% }
+ 
+Comics Date: <a href="<%= url_for 'comics', date => $date, do => 'get' %>"><%= $datefull %></a>, click to redownload for this date<br />
+<%= $r %>/<%= $t %> comics last updated <%= $stat %><br /><br />
+<%== join " | ", map { "<a href=/$_->[1]>$_->[0]</a>"} grep { $_->[1] && -d "$comicsdir/$_->[1]" } @$menu %>
+<br /><br />
+<center>
+% foreach my $comic ( map { $comics->$_ } @{$comics->list} ) {
+  % if ( $comic->img ) {
+    % if ( $comic->link ) {
+      <a href="<%= $comic->make_link %>">
+    % }
+    <img src="<%= $comic->img %>"><br /><br />
+    % if ( $comic->link ) {
+      </a>
+    % }
+  % } else {
+    % if ( $comic->link ) {
+      <a href="<%= $comic->make_link %>">
+    % }
+    <%= $comic->name %>
+    % if ( $comic->link ) {
+      </a>
+    % }
+    <br />
+  % }
+% }
+</center>
+<%== join " | ", map { "<a href=/$_->[1]>$_->[0]</a>"} grep { $_->[1] && -d "$comicsdir/$_->[1]" } @$menu %>

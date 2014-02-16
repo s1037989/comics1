@@ -1,0 +1,14 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use FindBin;
+BEGIN { unshift @INC, "$FindBin::Bin/../lib" }
+
+# Start command line interface for application
+require Mojolicious::Commands;
+require Comics;
+my $commands = Mojolicious::Commands->new(app => Comics->new);
+unshift @{$commands->namespaces}, 'Comics::Command';
+$commands->run(@ARGV);
